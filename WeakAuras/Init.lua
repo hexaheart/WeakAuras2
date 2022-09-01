@@ -48,6 +48,10 @@ function WeakAuras.IsRetail()
   return flavor == 10
 end
 
+function WeakAuras.IsDragonflight()
+  return WeakAuras.BuildInfo == 100000
+end
+
 function WeakAuras.IsClassicOrBCC()
   return WeakAuras.IsClassic() or WeakAuras.IsBCC()
 end
