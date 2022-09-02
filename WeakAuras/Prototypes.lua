@@ -8035,7 +8035,7 @@ Private.event_prototypes = {
       {
         name = "autoHide",
         hidden = true,
-        init = "true",
+        init = "not empowered",
         test = "true",
         store = true
       },
