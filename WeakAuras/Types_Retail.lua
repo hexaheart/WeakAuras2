@@ -66,3 +66,24 @@ function Private.get_zoneId_list()
   return zoneId_list
 end
 
+function Private.GetTalentInfo(specId)
+  -- return current talents for now: TODO
+  local talents = {}
+  local configId = C_ClassTalents.GetActiveConfigID()
+  local configInfo = C_Traits.GetConfigInfo(configId)
+  for _, treeId in ipairs(configInfo.treeIDs) do
+    local nodes = C_Traits.GetTreeNodes(treeId)
+    for _, nodeId in ipairs(nodes) do
+      local node = C_Traits.GetNodeInfo(configId, nodeId)
+      for _, entryID in ipairs(node.entryIDs) do
+        local entryInfo = C_Traits.GetEntryInfo(configId, entryID)
+        local definitionInfo = C_Traits.GetDefinitionInfo(entryInfo.definitionID)
+        local spellName, _, icon = GetSpellInfo(definitionInfo.spellID)
+        if spellName then
+          talents[entryID] = ("|T"..icon..":16|t " .. spellName)
+        end
+      end
+    end
+  end
+  return talents
+end

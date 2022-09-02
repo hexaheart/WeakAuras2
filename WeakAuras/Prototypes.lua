@@ -654,7 +654,7 @@ if WeakAuras.IsClassicOrBCCOrWrath() then
     end
     return result;
   end
-else
+elseif WeakAuras.IsShadowlands() then
   function WeakAuras.CheckTalentByIndex(index, extraOption)
     local tier = ceil(index / 3)
     local column = (index - 1) % 3 + 1
@@ -669,6 +669,33 @@ else
     else
       return selected
     end
+  end
+elseif WeakAuras.IsDragonflight() then
+  function WeakAuras.CheckTalentByIndex(talentId, extraOption)
+    local function hasTalentId(talentID)
+      local configId = C_ClassTalents.GetActiveConfigID()
+      local configInfo = C_Traits.GetConfigInfo(configId)
+      for _, treeId in ipairs(configInfo.treeIDs) do
+        local nodes = C_Traits.GetTreeNodes(treeId)
+        for _, nodeId in ipairs(nodes) do
+          local node = C_Traits.GetNodeInfo(configId, nodeId)
+          if node and node.activeEntry and node.activeEntry.entryID == talentID then
+            return node.ranksPurchased > 0
+          end
+        end
+      end
+    end
+
+    local hasTalent = hasTalentId(talentId)
+    if hasTalent == nil then
+      return nil
+    end
+    if extraOption == 4 then
+      return hasTalent
+    elseif extraOption == 5 then
+      return not hasTalent
+    end
+    return hasTalent
   end
 end
 
@@ -988,10 +1015,9 @@ local function valuesForTalentFunction(trigger)
       end
     end
     -- If a single specific class was found, load the specific list for it
-    if false then -- placeholder for dragonflight
-      --[[
-      if single_class_and_spec and Private.talentInfo[specId] then
-        return Private.talentInfo[specId]
+    if WeakAuras.IsDragonflight() then
+      if single_class_and_spec then
+        return Private.GetTalentInfo(single_class_and_spec)
       elseif single_class and single_spec then
         local classId
         for i = 1, GetNumClasses() do
@@ -1001,14 +1027,13 @@ local function valuesForTalentFunction(trigger)
           end
         end
         local specId = GetSpecializationInfoForClassID(classId, single_spec)
-        return Private.talentInfo[specId]
+        return Private.GetTalentInfo(specId)
       else
         local classId = select(3, UnitClass("player"))
         local specIndex = GetSpecialization()
         local specId = GetSpecializationInfoForClassID(classId, specIndex)
-        return Private.talent_types
+        return Private.GetTalentInfo(specId)
       end
-      ]]
     elseif WeakAuras.IsRetail() then
       if single_class_and_spec then
         local class = select(6, GetSpecializationInfoByID(single_class_and_spec))

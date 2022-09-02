@@ -1385,7 +1385,11 @@ end
 
 
 Private.talent_types = {}
-if WeakAuras.IsRetail() then
+if WeakAuras.IsDragonflight() then
+  local spec_frame = CreateFrame("Frame");
+  spec_frame:RegisterEvent("PLAYER_LOGIN")
+  spec_frame:SetScript("OnEvent", update_specs);
+elseif WeakAuras.IsRetail() then
   local spec_frame = CreateFrame("Frame");
   spec_frame:RegisterEvent("PLAYER_LOGIN")
   spec_frame:SetScript("OnEvent", update_specs);
