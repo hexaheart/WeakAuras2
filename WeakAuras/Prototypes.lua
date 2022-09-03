@@ -674,13 +674,15 @@ elseif WeakAuras.IsDragonflight() then
   function WeakAuras.CheckTalentByIndex(talentId, extraOption)
     local function hasTalentId(talentID)
       local configId = C_ClassTalents.GetActiveConfigID()
-      local configInfo = C_Traits.GetConfigInfo(configId)
-      for _, treeId in ipairs(configInfo.treeIDs) do
-        local nodes = C_Traits.GetTreeNodes(treeId)
-        for _, nodeId in ipairs(nodes) do
-          local node = C_Traits.GetNodeInfo(configId, nodeId)
-          if node and node.activeEntry and node.activeEntry.entryID == talentID then
-            return node.ranksPurchased > 0
+      if configId then
+        local configInfo = C_Traits.GetConfigInfo(configId)
+        for _, treeId in ipairs(configInfo.treeIDs) do
+          local nodes = C_Traits.GetTreeNodes(treeId)
+          for _, nodeId in ipairs(nodes) do
+            local node = C_Traits.GetNodeInfo(configId, nodeId)
+            if node and node.activeEntry and node.activeEntry.entryID == talentID then
+              return node.ranksPurchased > 0
+            end
           end
         end
       end
@@ -1275,6 +1277,7 @@ Private.load_prototype = {
       end,
       events = (WeakAuras.IsClassicOrBCC() and {"CHARACTER_POINTS_CHANGED"})
         or (WeakAuras.IsWrathClassic() and {"CHARACTER_POINTS_CHANGED", "PLAYER_TALENT_UPDATE"})
+        or (WeakAuras.IsDragonflight() and {"TRAIT_CONFIG_CREATED", "TRAIT_CONFIG_UPDATED", "PLAYER_TALENT_UPDATE"})
         or {"PLAYER_TALENT_UPDATE"},
       inverse = function(load)
         -- Check for multi select!
@@ -1307,6 +1310,7 @@ Private.load_prototype = {
       end,
       events = (WeakAuras.IsClassicOrBCC() and {"CHARACTER_POINTS_CHANGED"})
         or (WeakAuras.IsWrathClassic() and {"CHARACTER_POINTS_CHANGED", "PLAYER_TALENT_UPDATE"})
+        or (WeakAuras.IsDragonflight() and {"TRAIT_CONFIG_CREATED"})
         or {"PLAYER_TALENT_UPDATE"},
       inverse = function(load)
         return (WeakAuras.IsClassicOrBCC() or WeakAuras.IsRetail()) and (load.talent2_extraOption == 2 or load.talent2_extraOption == 3)
@@ -1338,6 +1342,7 @@ Private.load_prototype = {
       end,
       events = (WeakAuras.IsClassicOrBCC() and {"CHARACTER_POINTS_CHANGED"})
         or (WeakAuras.IsWrathClassic() and {"CHARACTER_POINTS_CHANGED", "PLAYER_TALENT_UPDATE"})
+        or (WeakAuras.IsDragonflight() and {"TRAIT_CONFIG_CREATED", "TRAIT_CONFIG_UPDATED", "PLAYER_TALENT_UPDATE"})
         or {"PLAYER_TALENT_UPDATE"},
       inverse = function(load)
         return (WeakAuras.IsClassicOrBCC() or WeakAuras.IsRetail()) and (load.talent3_extraOption == 2 or load.talent3_extraOption == 3)
@@ -5994,6 +5999,8 @@ Private.event_prototypes = {
           "SPELLS_CHANGED",
           "PLAYER_TALENT_UPDATE"
         }
+      elseif WeakAuras.IsDragonflight() then
+        events = { "TRAIT_CONFIG_CREATED", "TRAIT_CONFIG_UPDATED", "PLAYER_TALENT_UPDATE" }
       else
         events = { "PLAYER_TALENT_UPDATE" }
       end
