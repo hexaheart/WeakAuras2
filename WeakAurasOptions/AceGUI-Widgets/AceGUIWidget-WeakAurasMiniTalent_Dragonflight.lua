@@ -254,7 +254,7 @@ local methods = {
         button:ClearAllPoints()
         if button.posX > 8000 then
           -- reduce hole between 2 trees
-          --button.posX = button.posX - 2700
+          button.posX = button.posX - 2700
         end
         maxX = math.max(maxX, button.posX)
         minX = math.min(minX, button.posX)
