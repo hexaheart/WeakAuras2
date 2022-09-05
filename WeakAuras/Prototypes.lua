@@ -1015,7 +1015,7 @@ local function valuesForTalentFunction(trigger)
     end
 
     local single_class_and_spec
-    if WeakAuras.IsRetail() and trigger.use_spec == nil and trigger.use_class == nil then
+    if WeakAuras.IsShadowlands() and trigger.use_spec == nil and trigger.use_class == nil then
       if trigger.use_class_and_spec and trigger.class_and_spec and trigger.class_and_spec.single then
         single_class_and_spec = trigger.class_and_spec.single
       elseif trigger.use_class_and_spec == false then
@@ -1049,7 +1049,7 @@ local function valuesForTalentFunction(trigger)
         local specId = GetSpecializationInfoForClassID(classId, specIndex)
         return Private.talentInfo[specId]
       end
-    elseif WeakAuras.IsRetail() then
+    elseif WeakAuras.IsShadowlands() then
       if single_class_and_spec then
         local class = select(6, GetSpecializationInfoByID(single_class_and_spec))
         if class then
@@ -1275,8 +1275,8 @@ Private.load_prototype = {
       type = "multiselect",
       values = "spec_types_all",
       init = "arg",
-      enable = WeakAuras.IsRetail(),
-      hidden = not WeakAuras.IsRetail(),
+      enable = WeakAuras.IsShadowlands(),
+      hidden = not WeakAuras.IsShadowlands(),
       events = {"PLAYER_TALENT_UPDATE"}
     },
     {
