@@ -224,7 +224,6 @@ local methods = {
     self.linePool:ReleaseAll()
     self.buttons = {}
     self.talentIdToButton = {}
-    local maxX, maxY, minX, minY = 0, 0, math.huge, math.huge
     for index, data in pairs(self.list) do
       if index ~= 999 then -- background index
         local button = self.buttonPool:Acquire()
@@ -240,6 +239,8 @@ local methods = {
         button:SetNormalTexture(icon)
         local multiTalent, multiTalentTotal = 0, 0
         button.posX, button.posY, multiTalent, multiTalentTotal = unpack(data[3])
+        button.posX = button.posX / 10
+        button.posY = button.posY / 10
         if multiTalentTotal > 1 then
           if multiTalent == 1 then
             button.offset = "left"
@@ -252,24 +253,34 @@ local methods = {
         button.targets = data[4]
         button:UpdateTexture()
         button:ClearAllPoints()
-        if button.posX > 8000 then
-          -- reduce hole between 2 trees
-          button.posX = button.posX - 2700
-        end
-        maxX = math.max(maxX, button.posX)
-        minX = math.min(minX, button.posX)
-        maxY = math.max(maxY, button.posY)
-        minY = math.min(minY, button.posY)
         tinsert(self.buttons, button)
       end
     end
-    for _, button in pairs(self.buttons) do
-      -- crop top & left margin
-      button.posX = button.posX - minX + 200
-      button.posY = button.posY - minY
+
+    -- zoom both panel in their center
+    local middleX = 1618 / 2
+    local LeftPannelCenter = { x = middleX / 2, y = 883 / 2 }
+    local RightPannelCenter = { x = (middleX / 2) * 3, y = 883 / 2 }
+    local pannelScale = 1.4
+    for _, b in pairs(self.buttons) do
+      if b.posX < middleX then -- left pannel
+        b.posX = b.posX - LeftPannelCenter.x
+        b.posX = b.posX * pannelScale
+        b.posX = b.posX + LeftPannelCenter.x
+        b.posY = b.posY - LeftPannelCenter.y
+        b.posY = b.posY * pannelScale
+        b.posY = b.posY + LeftPannelCenter.y
+      else                     -- right pannel
+        b.posX = b.posX - RightPannelCenter.x
+        b.posX = b.posX * pannelScale
+        b.posX = b.posX + RightPannelCenter.x
+        b.posY = b.posY - RightPannelCenter.y
+        b.posY = b.posY * pannelScale
+        b.posY = b.posY + RightPannelCenter.y
+      end
     end
-    self.scale = self.saveSize.fullWidth / (maxX - minX + 500)
-    self.saveSize.fullHeight = (maxY - minY + 500)* self.scale
+    self.scale = self.saveSize.fullWidth / 1618 -- /dump ClassTalentFrame:GetWidth()
+    self.saveSize.fullHeight = 883 * self.scale -- /dump ClassTalentFrame:GetHeight()
     if self.list[999] then
       self.background:SetAtlas(self.list[999])
     end
