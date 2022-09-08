@@ -52,8 +52,9 @@ function WeakAuras.IsShadowlands()
   return WeakAuras.IsRetail() and not WeakAuras.IsDragonflight()
 end
 
+local IsDragonflight = floor(select(4, GetBuildInfo()) / 10000) == 10
 function WeakAuras.IsDragonflight()
-  return WeakAuras.BuildInfo == 100000
+  return IsDragonflight
 end
 
 function WeakAuras.IsClassicOrBCC()
